@@ -1,0 +1,43 @@
+services:
+  db:
+    container_name: db
+    hostname: db-host
+    image: postgres:16-alpine
+    restart: always
+    env_file: ./backend/.env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      start_period: 30s
+      interval: 10s
+      retries: 2
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data/
+
+  app:
+    container_name: app
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ./scripts/unicorn.sh
+    env_file: ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+
+
+  bot:
+    container_name: bot
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    command: >
+      /bin/sh -c "python main.py"
+    restart: always
+    env_file: ./bot/.env
+    depends_on:
+      - app
+    volumes:
+      - ./logs:/bot/logs
+

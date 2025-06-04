@@ -1,0 +1,15 @@
+[tool.poetry]
+name="startup-core"
+version="1.0.0"
+description="Core logic for startup backend"
+authors=[]
+
+[tool.poetry.dependencies]
+python="^3.12"
+pydantic = "^2.11.5"
+pydantic-settings = "^2.9.1"
+sqlalchemy = "^2.0.41"
+alembic = "^1.16.1"
+asyncpg = "^0.30.0"
+fastapi = "^0.115.12"
+uvicorn = "^0.34.3"
